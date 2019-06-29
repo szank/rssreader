@@ -46,7 +46,45 @@ paths:
     get:
       summary: |
         Retrieved articles from the RSS feeds. The articles can be filterd based on the 
-        source ID and source category. 
+        source ID and source category.
+      parameters:
+      - name: maxtimestamp
+        in: query
+        description: |
+          Unix timestamp marking the newest feed that sould be returned. If empty, the current 
+          timestamp is used
+        required: false
+        schema:
+          type: integer
+      - name: sources
+        in: query
+        description: |
+          A list of sources to retrieve articles from. If not set, defaults to all sources.
+        schema:
+          type: array
+          items:
+            type: string
+        explode: false
+        example: "sources=1,2,4"
+      - name: categories
+        in: query
+        description: |
+          A list of categories to be applied as a filter for the returned article list.
+          If not set, defaults to all categories
+        schema:
+          type: array
+          items:
+            type: string
+        explode: false
+        example: "categories=technology,UK"
+      - name: count
+        in: query
+        description: Number of feeds to retrieve
+        schema:
+          type: integer
+          default: 10
+        example: 10
+          
       responses:
         200:
           description: The list of articles 
@@ -54,6 +92,3 @@ paths:
             application/json:
               schema:
                 type: object
-              
-      
-  
