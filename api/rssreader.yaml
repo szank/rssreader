@@ -1,0 +1,59 @@
+openapi: 3.0.1
+info:
+  title: RSS reader API 
+  description: The API used to read RSS feeds
+  contact:
+    email: maciej.galkowski@gmail.com
+  version: "1"
+paths:
+  /sources:
+    get: 
+      summary: Get the list of available feeds 
+      responses:
+        200:
+          description: The feedID should be used in the query to select the active RSS feeds
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        sourceID:
+                          type: string
+                          description: |
+                            String uniquely identifying the feed
+                          example: "1"
+                        category:
+                          type: array
+                          items:
+                            type: string
+                          description: Category of the feed, such as UK or Technology
+                        sourceURL:
+                          type: string
+                          description: Url of the RSS feed
+                        summary: 
+                          type: string
+                          description: A short description of the feed
+                        title:
+                          type: string
+                          description: Feed title
+         
+  /feeds:
+    get:
+      summary: |
+        Retrieved articles from the RSS feeds. The articles can be filterd based on the 
+        source ID and source category. 
+      responses:
+        200:
+          description: The list of articles 
+          content:
+            application/json:
+              schema:
+                type: object
+              
+      
+  
