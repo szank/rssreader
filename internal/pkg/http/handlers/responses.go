@@ -22,4 +22,6 @@ type Article struct {
 	PublicationUnixTimestamp int64    `json:"publication_unix_timestamp"`
 	Categories               []string `json:"categories,omitempty"`
 	FeedTitle                string   `json:"feed_title"`
+	Description              string   `json:"description"`
+	Link                     string   `json:"link`
 }

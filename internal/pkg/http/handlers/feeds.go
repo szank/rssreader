@@ -46,7 +46,27 @@ func (a *Articles) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sources := a.provider.All()
+	requestedSources, err := getSources(r)
+	if err != nil {
+		render.Render(w, r, invalidRequestError(err))
+		return
+	}
+
+	sources := []sources.Source{}
+	if len(requestedSources) == 0 {
+		sources = a.provider.All()
+	} else {
+		for _, s := range requestedSources {
+			selectedSource, err := a.provider.Get(s)
+			if err != nil {
+				render.Render(w, r, invalidRequestError(err))
+				return
+			}
+
+			sources = append(sources, selectedSource)
+		}
+	}
+
 	chronologicalIterator, err := filters.NewChronologicalSource(maxTimestamp, sources)
 	if err != nil {
 		fmt.Printf("error retrieving article list: %v\n", err)
@@ -79,6 +99,8 @@ func (a *Articles) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			PublicationUnixTimestamp: article.PublicationDate.Unix(),
 			Categories:               article.Categories,
 			FeedTitle:                article.FeedName,
+			Description:              article.Description,
+			Link:                     article.Link,
 		})
 		articleCount++
 		if articleCount == count {
@@ -149,4 +171,23 @@ func getCategories(r *http.Request) ([]string, error) {
 	}
 
 	return categories, nil
+}
+
+func getSources(r *http.Request) ([]string, error) {
+	sourcesString := r.URL.Query().Get("sources")
+	if sourcesString == "" {
+		return nil, nil
+	}
+
+	sources := strings.Split(sourcesString, ",")
+	for _, source := range sources {
+		if source == "" {
+			return nil, errors.New("empty source")
+		}
+		if strings.TrimSpace(source) != source {
+			return nil, errors.Errorf("source %q contains leading or trailing whitespaces", source)
+		}
+	}
+
+	return sources, nil
 }

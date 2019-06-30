@@ -29,6 +29,8 @@ type Article struct {
 	PublicationDate *time.Time
 	Categories      []string
 	FeedName        string
+	Description     string
+	Link            string
 }
 
 type Iterator struct {
@@ -138,6 +140,8 @@ func (s *Source) AllArticles() ([]Article, error) {
 			PublicationDate: currentSource.Items[i].PublishedParsed,
 			Categories:      currentSource.Items[i].Categories,
 			FeedName:        s.Title,
+			Description:     currentSource.Items[i].Description,
+			Link:            currentSource.Items[i].Link,
 		})
 	}
 
