@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	"rssreader/internal/pkg/http/handlers"
 	"rssreader/internal/pkg/http/routing"
@@ -10,6 +11,11 @@ import (
 )
 
 func main() {
+	serverAddress := os.Getenv("RSS_READER_SERVER_ADDRESS")
+	if serverAddress == "" {
+		serverAddress = ":8080"
+	}
+
 	sourceDefinition, err := sources.New()
 	if err != nil {
 		fmt.Printf("Error reading the source definitions: %v", err)
@@ -20,7 +26,7 @@ func main() {
 	feedsHandler := handlers.NewArticles(sourceDefinition)
 	mux := routing.New(sourcesHandler, feedsHandler)
 
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	if err := http.ListenAndServe(serverAddress, mux); err != nil {
 		fmt.Printf("Error starting the server: %v\n", err)
 	}
 }
