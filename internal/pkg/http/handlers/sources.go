@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"rssreader/internal/pkg/sources"
+
+	"github.com/go-chi/render"
 )
 
 func NewSources(provider *sources.Sources) *Sources {
@@ -35,6 +37,7 @@ func (s *Sources) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(returnValue); err != nil {
-		fmt.Printf("Error encoding the JSON response: %v\n", err)
+		fmt.Printf("Error encoding the JSON for /sources response: %v\n", err)
+		render.Render(w, r, renderError(err))
 	}
 }

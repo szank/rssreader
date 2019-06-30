@@ -1,6 +1,8 @@
 package sources
 
 import (
+	"time"
+
 	"github.com/mmcdole/gofeed"
 	"github.com/pkg/errors"
 )
@@ -16,6 +18,21 @@ type Source struct {
 type Sources struct {
 	sourceMap  map[string]Source
 	sourceList []Source
+}
+
+type Articles struct {
+	ArticleList []Article
+}
+
+type Article struct {
+	Title           string
+	PublicationDate *time.Time
+	Categories      []string
+	FeedName        string
+}
+
+type Iterator struct {
+	articles []gofeed.Item
 }
 
 func New() (*Sources, error) {
@@ -100,4 +117,29 @@ func (s *Sources) Get(id string) (Source, error) {
 
 func (s *Sources) All() []Source {
 	return s.sourceList
+}
+
+func (s *Source) AllArticles() ([]Article, error) {
+	// refresh the article list on every call
+	parser := gofeed.NewParser()
+	currentSource, err := parser.ParseURL(s.URL)
+	if err != nil {
+		return nil, errors.Errorf("error refreshing article list for source %d[%s]: %v", s.ID, s.Title, err)
+	}
+
+	returnValue := []Article{}
+	for i := range currentSource.Items {
+		if currentSource.Items[i] == nil {
+			continue
+		}
+
+		returnValue = append(returnValue, Article{
+			Title:           currentSource.Items[i].Title,
+			PublicationDate: currentSource.Items[i].PublishedParsed,
+			Categories:      currentSource.Items[i].Categories,
+			FeedName:        s.Title,
+		})
+	}
+
+	return returnValue, nil
 }

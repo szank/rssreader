@@ -17,7 +17,8 @@ func main() {
 	}
 
 	sourcesHandler := handlers.NewSources(sourceDefinition)
-	mux := routing.New(sourcesHandler)
+	feedsHandler := handlers.NewArticles(sourceDefinition)
+	mux := routing.New(sourcesHandler, feedsHandler)
 
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		fmt.Printf("Error starting the server: %v\n", err)
