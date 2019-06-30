@@ -138,7 +138,9 @@ func getMaxTimestamp(r *http.Request) (time.Time, error) {
 	unixTimeString := r.URL.Query().Get("maxtimestamp")
 	if unixTimeString == "" {
 		//return maximum time
-		return time.Unix(math.MaxInt64, 0), nil
+		// some strange things are happening with time set to Unix math.MaxInt64.
+		// time.Now().Before(time.Unix(math.MaxInt64-1, 0)) == false ??
+		return time.Unix(math.MaxInt64/1000, 0), nil
 	}
 
 	parsedUnixTimestamp, err := strconv.ParseInt(unixTimeString, 10, 64)
