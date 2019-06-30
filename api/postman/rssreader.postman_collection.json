@@ -1,0 +1,100 @@
+{
+	"info": {
+		"_postman_id": "16b33009-6d92-4fee-970e-9e1f714b5089",
+		"name": "rssreader",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetSources",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{httpAddress}}/sources",
+					"host": [
+						"{{httpAddress}}"
+					],
+					"path": [
+						"sources"
+					]
+				},
+				"description": "return the list of the available feed sources"
+			},
+			"response": []
+		},
+		{
+			"name": "GetFeeds",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{httpAddress}}/feeds?count=10&maxtimestamp=1561926404&sources=1,2,3",
+					"host": [
+						"{{httpAddress}}"
+					],
+					"path": [
+						"feeds"
+					],
+					"query": [
+						{
+							"key": "count",
+							"value": "10"
+						},
+						{
+							"key": "maxtimestamp",
+							"value": "1561926404"
+						},
+						{
+							"key": "sources",
+							"value": "1,2,3"
+						},
+						{
+							"key": "categories",
+							"value": "domesticNews",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "ecd4d2af-bb3d-44f6-9fad-c245624ddb84",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "9da08133-c5ba-43ce-a808-35a59769c10a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "9e843292-3bca-44e3-b2c0-2ef7de6c3116",
+			"key": "httpAddress",
+			"value": "http://127.0.0.1:8080",
+			"type": "string"
+		}
+	]
+}
