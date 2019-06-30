@@ -42,23 +42,27 @@ func NewChronologicalSource(timestampsBefore time.Time, sources []sources.Source
 
 		// find the first article that is before the given timestmap
 		articlePosition := 0
+		// if the first element was published before the timesamp, add everything.
+		if articles[0].PublicationDate.Before(timestampsBefore) {
+			iterator.sources = append(iterator.sources, articles)
+			continue
+		}
 
 		for i := range articles {
 			if articles[i].PublicationDate == nil {
 				return nil, errors.New("article has missing publication date")
 			}
-
-			// find first article published before the given timestamp
+			// find first article published after the given timestamp
 			// should be binary search
-			if articles[i].PublicationDate.Before(timestampsBefore) ||
+			if articles[i].PublicationDate.After(timestampsBefore) ||
 				articles[i].PublicationDate.Equal(timestampsBefore) {
 				articlePosition = i
+			} else {
 				break
 			}
 		}
-
 		// cut off head of the slice until the point that all the articles are older than the provided minTimestamp
-		source := articles[articlePosition:]
+		source := articles[articlePosition+1:]
 		iterator.sources = append(iterator.sources, source)
 	}
 
