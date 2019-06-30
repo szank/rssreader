@@ -15,38 +15,19 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  sources:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        sourceID:
-                          type: string
-                          description: |
-                            String uniquely identifying the feed
-                          example: "1"
-                        category:
-                          type: array
-                          items:
-                            type: string
-                          description: Category of the feed, such as UK or Technology
-                        sourceURL:
-                          type: string
-                          description: Url of the RSS feed
-                        summary: 
-                          type: string
-                          description: A short description of the feed
-                        title:
-                          type: string
-                          description: Feed title
+                $ref: '#/components/schemas/SourceList'
+        422:
+          description: Returned when there was a problem with rendering the response 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
          
   /feeds:
     get:
       summary: |
         Retrieved articles from the RSS feeds. The articles can be filterd based on the 
-        source ID and source category.
+        source ID and article category.
       parameters:
       - name: maxtimestamp
         in: query
@@ -91,4 +72,90 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/ArticleList'
+        400:
+          description: Returned when server has encountered an error while parsing the request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        500:
+          description: Returned when the server has encountered an error while retrieving the RSS feeds 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+                
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Http error name 
+        error:
+          type: string 
+          description: Error details
+    ArticleList:
+      type: object
+      properties:
+        articles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Article'
+    Article:
+      type: object
+      properties:
+        title:
+          type: string
+        publication_time:
+          type: string
+          description: String representation of the publication time
+        publication_unix_timestamp:
+          type: integer
+          description: Unix timestmp of the publication time 
+        categories:
+          type: array
+          items:
+            type: string
+          description: List of article categories
+        feed_title:
+          type: string 
+          description: Name of the feed that the article has orinated from
+        description:
+          type: string 
+          description: article description
+        link:
+          type: string
+          description: Link to the main article
+    SourceList:
+      type: object
+      properties:
+        sources:
+          type: array
+          items:
+            $ref: '#/components/schemas/Source'
+    Source:
+      type: object
+      properties:
+        sourceID:
+          type: string
+          description: |
+            String uniquely identifying the feed
+          example: "1"
+        category:
+          type: array
+          items:
+            type: string
+          description: Category of the feed, such as UK or Technology
+        sourceURL:
+          type: string
+          description: Url of the RSS feed
+        summary: 
+          type: string
+          description: A short description of the feed
+        title:
+          type: string
+          description: Feed title
